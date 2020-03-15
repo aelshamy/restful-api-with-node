@@ -2,6 +2,7 @@ import cors from 'cors';
 import Express from 'express';
 import basicAuth from 'express-basic-auth';
 import helmet from 'helmet';
+import { connectDb } from './db.config';
 
 export class ServerConfig {
   #userAccounts = {
@@ -75,14 +76,16 @@ export class ServerConfig {
 
   registerErrorHandlingMiddleware() {
     this.app.get('env') === 'development'
-      ? this.registerMiddleware(({ statusCode, message, stack }, _, res) => {
-          res.status(status);
-          res.json({
-            statusCode,
-            message,
-            stack
-          });
-        })
+      ? this.registerMiddleware(
+          ({ statusCode = 500, message, stack }, _, res) => {
+            res.status(status);
+            res.json({
+              statusCode,
+              message,
+              stack
+            });
+          }
+        )
       : this.registerMiddleware(({ statusCode, message }, _, res) => {
           res.status(status);
           res.json({
@@ -103,9 +106,15 @@ export class ServerConfig {
     return this;
   }
 
-  listen() {
-    this.app.listen(this.port, () => {
-      console.log(`Listening on port: ${this.port}`);
-    });
+  async listen() {
+    try {
+      await connectDb();
+
+      this.app.listen(this.port, () => {
+        console.log(`Listening on port: ${this.port}`);
+      });
+    } catch (error) {
+      console.error(`DB error ${error.message}`);
+    }
   }
 }

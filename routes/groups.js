@@ -11,7 +11,7 @@ router.get('/', AsyncWrapper(getGroups));
 router.get('/:contactId', AsyncWrapper(getGroupsForContact));
 
 // DELETE /contacts/:Id
-router.put('/:id', () => null);
+router.delete('/:id', () => null);
 
 export const groups = {
   baseUrl: '/groups',
