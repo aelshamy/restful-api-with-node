@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 export const connectDb = async url => {
-  mongoose.connect(url || 'mongodb://localhost:27017', {
+  mongoose.connect(url || 'mongodb://localhost:27017/contactsdb', {
     useUnifiedTopology: true,
     useCreateIndex: true,
     useNewUrlParser: true
